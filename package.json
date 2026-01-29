@@ -1,0 +1,26 @@
+{
+  "name": "aut",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && playwright test",
+    "test:report": "npm run test && npx playwright show-report",
+    "test:watch": "npm run build && playwright test --ui"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "@types/node-fetch": "^2.6.13",
+    "node-fetch": "^2.7.0",
+    "playwright": "^1.58.0",
+    "playwright-test": "^14.1.12",
+    "playwright-test-reporter": "^1.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "uuid": "^13.0.0"
+  }
+}

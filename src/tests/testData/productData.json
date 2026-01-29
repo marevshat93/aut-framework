@@ -1,0 +1,14 @@
+
+    {
+      "title": "Test Product",
+      "description": "Test Product Description",
+      "category": "Test Category",
+      "price": 9.99,
+      "warrantyInformation": "1 month warranty",
+      "shippingInformation": "Ships in 1 month",
+      "availabilityStatus": "Low Stock",
+      "returnPolicy": "30 days return policy",
+      "minimumOrderQuantity": 24,
+      "thumbnail": "...",
+      "images": ["...", "...", "..."]
+    }
