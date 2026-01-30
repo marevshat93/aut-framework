@@ -1,15 +1,15 @@
 import { test, step, createExpect, ExpectWithMessage } from '../../framework/core/testContext';
-import { SamplePostsClient } from '../../framework/api/DummyJsonClient';
+import { DummyJsonClient } from '../../framework/api/DummyJsonClient';
 
 type ApiError = Error & { statusCode?: number };
 
 test.describe('DummyJSON Products API Negative Tests', () => {
-  let client: SamplePostsClient;
+  let client: DummyJsonClient;
   let expect: ExpectWithMessage;
 
   test.beforeEach(async ({ logger }) => {
     logger.info('Executing test setup');
-    client = new SamplePostsClient(logger);
+    client = new DummyJsonClient(logger);
     expect = createExpect(logger);
     logger.info('Test setup completed');
   });

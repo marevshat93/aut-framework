@@ -44,6 +44,38 @@ export default class HtmlReporter {
     this.saveConsoleLogs(this.rootSuite);
   }
 
+   /**
+   * Format duration in milliseconds to a human-readable string
+   */
+   private formatDuration(ms: number): string {
+    if (ms < 1000) {
+      return `${Math.round(ms)}ms`;
+    }
+    return `${(ms / 1000).toFixed(2)}s`;
+  }
+
+  /**
+   * Calculate total duration for a suite by summing all test durations
+   */
+  private calculateSuiteDuration(suite: Suite): number {
+    let totalDuration = 0;
+    
+    // Sum durations from all tests in this suite
+    for (const test of suite.tests) {
+      const lastResult = test.results[test.results.length - 1];
+      if (lastResult?.duration) {
+        totalDuration += lastResult.duration;
+      }
+    }
+    
+    // Recursively sum durations from child suites
+    for (const childSuite of suite.suites) {
+      totalDuration += this.calculateSuiteDuration(childSuite);
+    }
+    
+    return totalDuration;
+  }
+
   // The methods below remain as a more detailed implementation example and can be
   // wired to the current Playwright reporter lifecycle if desired.
   private buildHtml(rootSuite: Suite, status: string): string {
@@ -109,10 +141,15 @@ export default class HtmlReporter {
       return childSuitesHtml;
     }
 
+    // Calculate suite duration
+    const suiteDuration = this.calculateSuiteDuration(suite);
+    const durationText = suiteDuration > 0 ? `<span style="font-size:0.75rem; color:#9ca3af; margin-left:0.5rem;">(${this.formatDuration(suiteDuration)})</span>` : '';
+
     return `
 <details class="suite" open>
   <summary>
     <span>${suite.title || 'Root Suite'}</span>
+    ${durationText}
   </summary>
   <div style="padding: 0 0.9rem 0.75rem;">
     ${testsHtml}
@@ -131,6 +168,10 @@ export default class HtmlReporter {
 
     const steps = stepsAttachment ? this.safeJsonParse(stepsAttachment.body || '[]', []) : [];
     const logs = logsAttachment ? this.safeJsonParse(logsAttachment.body || '[]', []) : [];
+
+    // Get test duration
+    const testDuration = lastResult?.duration ?? 0;
+    const durationText = testDuration > 0 ? `<span style="font-size:0.75rem; color:#9ca3af; margin-left:0.5rem;">(${this.formatDuration(testDuration)})</span>` : '';
 
     const stepsHtml = steps
       .map(
@@ -160,7 +201,7 @@ export default class HtmlReporter {
 <details class="test" open>
   <summary>
     <span>${escapeHtml(test.title)}</span>
-    <span class="badge ${badgeClass}">${status.toUpperCase()}</span>
+    <span class="badge ${badgeClass}">${status.toUpperCase()} ${durationText}</span>
   </summary>
   <div style="padding: 0 0.9rem 0.75rem;">
     <details class="steps" open>

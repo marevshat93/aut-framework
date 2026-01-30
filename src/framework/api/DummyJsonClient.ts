@@ -101,7 +101,7 @@ export interface Category {
  * Example API client extending the BaseApiClient.
  * Targets the JSONPlaceholder /posts resource.
  */
-export class SamplePostsClient extends BaseApiClient {
+export class DummyJsonClient extends BaseApiClient {
   constructor(logger: Logger) {
     super('dummyJSON', logger);
   }

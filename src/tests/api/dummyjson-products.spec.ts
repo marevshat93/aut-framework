@@ -1,15 +1,15 @@
 import { test, step, createExpect, ExpectWithMessage } from '../../framework/core/testContext';
-import { SamplePostsClient } from '../../framework/api/DummyJsonClient';
+import { DummyJsonClient } from '../../framework/api/DummyJsonClient';
 import { randomInt } from 'crypto';
 import { readFileSync } from 'fs';
 
 test.describe('DummyJSON Products API Positive Tests', () => {
-  let client: SamplePostsClient;
+  let client: DummyJsonClient;
   let expect: ExpectWithMessage;
 
   test.beforeEach(async ({ logger }) => {
     logger.info('Executing test setup');
-    client = new SamplePostsClient(logger);
+    client = new DummyJsonClient(logger);
     expect = createExpect(logger);
     logger.info('Test setup completed');
   });
@@ -148,6 +148,7 @@ test.describe('DummyJSON Products API Positive Tests', () => {
       expect(result!.products.every(p => p.title != undefined)).toBe(true);
       expect(result!.products.every(p => p.price != undefined)).toBe(true);
       expect(result!.products.every(p => p.category == undefined)).toBe(true);
+      //other fields should be undefined too a custom function to check the correct fromatting can be defined 
     });
   });
 
@@ -192,6 +193,21 @@ test.describe('DummyJSON Products API Positive Tests', () => {
       expect(result!.title, 'The product should have the correct title').toBe(productToDelete!.title);
       expect(result!.description, 'The product should have the correct description').toBe(productToDelete!.description);
       expect(result!.category, 'The product should have the correct category').toBe(productToDelete!.category);
+    });
+  });
+
+  test('TC11 - get categories list vs get all categories endpoints inegrity test', async ({ logger, testSteps }) => {
+    const categoriesList = await step(logger, testSteps, 'Call GET /products/category-list and get the list of categories', async () => {
+      return client.getCategoriesList();
+    });
+    const allCategories = await step(logger, testSteps, 'Call GET /products/categories and get the list of categories', async () => {
+      return client.getAllCategories();
+    });
+    await step(logger, testSteps, 'Validate the categories list and all categories are the same', async () => {
+      expect(categoriesList!.length, 'The length of the categories list should be the same as the length of the all categories').toBe(allCategories!.length);
+    });
+    await step(logger, testSteps, 'Validate the categories (slug) contained in all categories are the same as the categories list', async () => {
+      allCategories!.every(c => expect(categoriesList!.includes(c.slug!), `Category ${c.slug} should be contained in the categories list`).toBe(true));
     });
   });
 });

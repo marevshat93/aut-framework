@@ -1,15 +1,15 @@
 import { test, step, createExpect, ExpectWithMessage } from '../../framework/core/testContext';
-import { SamplePostsClient } from '../../framework/api/DummyJsonClient';
+import { DummyJsonClient } from '../../framework/api/DummyJsonClient';
 import { readFileSync } from 'fs';
 
 
 test.describe('DummyJSON Products API Positive Tests', () => {
-    let client: SamplePostsClient;
+    let client: DummyJsonClient;
     let expect: ExpectWithMessage;
   
     test.beforeEach(async ({ logger }) => {
       logger.info('Executing test setup');
-      client = new SamplePostsClient(logger);
+      client = new DummyJsonClient(logger);
       expect = createExpect(logger);
       logger.info('Test setup completed');
     });
@@ -39,6 +39,7 @@ test.describe('DummyJSON Products API Positive Tests', () => {
             expect(createResult!.description, 'The new product should have the correct description').toBe(productData.description);
             expect(createResult!.category, 'The new product should have the correct category').toBe(productData.category);
         });
+        //another step to validate the product update => update endpoint => verify response then verify with the getbyID endpoint
         // Commented out due to the deletion endpoint nor making real changes to the database
         // await step(logger, testSteps, 'Delete the new product', async () => {
         //     await client.deleteProduct(createResult!.id);
